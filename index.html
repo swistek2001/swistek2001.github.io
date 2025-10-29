@@ -1,0 +1,106 @@
+<!--
+Pliki zawarte: index.html (z age-gate + redirect), .htaccess (Apache redirect), nginx.conf (blok serwera dla nginx)
+Instrukcje poniżej (PL)
+-->
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>swistu.pl — przekierowanie</title>
+  <style>
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial}
+    .center{height:100%;display:flex;align-items:center;justify-content:center;background:#0b1220;color:#fff}
+    .card{max-width:760px;padding:28px;border-radius:12px;box-shadow:0 10px 30px rgba(2,6,23,.6);background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.01))}
+    h1{margin:0 0 8px;font-size:20px}
+    p{margin:0 0 18px;color:#cbd5e1}
+    .buttons{display:flex;gap:12px}
+    button{padding:10px 16px;border-radius:8px;border:none;cursor:pointer;font-weight:600}
+    .accept{background:#22c55e;color:#04291a}
+    .decline{background:#334155;color:#fff}
+    .small{font-size:13px;color:#94a3b8;margin-top:12px}
+  </style>
+</head>
+<body>
+  <div class="center">
+    <div class="card" role="main" aria-labelledby="title">
+      <h1 id="title">Przekierowanie — swistu.pl</h1>
+      <p>Ta strona przekierowuje do zewnętrznej usługi oferującej otwieranie lootboxów (skiny). Zawartość może być przeznaczona wyłącznie dla osób pełnoletnich (18+).</p>
+
+      <div class="buttons" id="cta">
+        <button class="accept" id="yes">Mam 18 lat lub więcej — przejdź dalej</button>
+        <button class="decline" id="no">Nie — wróć</button>
+      </div>
+
+      <p class="small">Jeśli nic nie zrobisz w ciągu 10 sekund, nastąpi przekierowanie (tymczasowe). Jeśli chcesz uniknąć automatycznego przekierowania, odśwież stronę/powróć.</p>
+    </div>
+  </div>
+
+  <script>
+    // Target URL (affiliate)
+    const TARGET = 'https://csgo-skins.com/?ref=SWISTU';
+
+    // jeśli użytkownik już potwierdził wiek w localStorage, od razu przekieruj
+    if (localStorage.getItem('swistu_ok') === '1') {
+      // delikatne opóźnienie, żeby użytkownik widział stronę
+      setTimeout(()=> { window.location.replace(TARGET); }, 600);
+    }
+
+    const yes = document.getElementById('yes');
+    const no = document.getElementById('no');
+
+    yes.addEventListener('click', ()=>{
+      localStorage.setItem('swistu_ok','1');
+      // preferowane: replace() żeby nie zostawiać historii przekierowania
+      window.location.replace(TARGET);
+    });
+
+    no.addEventListener('click', ()=>{
+      // prosty powrót do poprzedniej strony
+      if (document.referrer) window.location.href = document.referrer; else alert('Wróć do poprzedniej strony.');
+    });
+
+    // fallback: automatyczne przekierowanie po 10s tylko jeśli użytkownik jeszcze nie odmówił
+    let timer = setTimeout(()=>{
+      // jeśli nie ma ustawienia odmowy -> przekieruj
+      if (localStorage.getItem('swistu_ok') !== '0') window.location.replace(TARGET);
+    }, 10000);
+
+  </script>
+
+  <!-- meta-refresh fallback (jeśli javascript wyłączony): -->
+  <noscript>
+    <meta http-equiv="refresh" content="10;url=https://csgo-skins.com/?ref=SWISTU">
+    <p>Przekierowanie nastąpi automatycznie. Jeśli nie — <a rel="nofollow noopener noreferrer" href="https://csgo-skins.com/?ref=SWISTU">kliknij tutaj</a>.</p>
+  </noscript>
+</body>
+</html>
+
+
+# .htaccess (Apache) - jeśli hostujesz na Apache, wrzuć do katalogu public_html:
+
+# BEGIN redirect
+RewriteEngine On
+# 302 temporary redirect
+RewriteRule ^$ https://csgo-skins.com/?ref=SWISTU [R=302,L]
+# END redirect
+
+
+# nginx.conf (fragment) - przykładowy blok serwera dla swistu.pl
+
+# server {
+#     listen 80;
+#     server_name swistu.pl www.swistu.pl;
+#     root /var/www/swistu.pl/html;
+#
+#     # prosty redirect (bez age-gate)
+#     location = / {
+#         return 302 https://csgo-skins.com/?ref=SWISTU;
+#     }
+#
+#     # jeśli chcesz hostować plik index.html z age-gate, usuń powyższy location i użyj:
+#     # location / { try_files $uri $uri/ =404; }
+#}
+
