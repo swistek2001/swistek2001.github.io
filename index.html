@@ -117,7 +117,7 @@
      * - stopAfterMissing: when this many consecutive indices have no image, stop
      * - maxImages: safety cap
      */
-    async function loadSequential({path='/images/', exts=['.jpg','.png','.webp'], start=1, stopAfterMissing=5, maxImages=1000}) {
+    async function loadSequential({path='/images/', exts=['.png','.jpg','.webp'], start=1, stopAfterMissing=5, maxImages=1000}) {
         const gallery = document.getElementById('gallery');
         const baseurl = window.location.origin;
         gallery.innerHTML = '';
@@ -175,14 +175,14 @@
     }
 
     window.addEventListener('load', () => {
-        const path = '/';
+        const path = '/images/';
         const start = 1;
-        const exts = ['.jpg','.png','.webp'];
+        const exts = ['.png','.jpg','.webp'];
         const stopAfter = 5;
         loadSequential({path, exts, start, stopAfter, maxImages: 2000});
     });
 
-    loadSequential({path:'/', exts:['.jpg','.png','.webp'], start:1, stopAfterMissing:5, maxImages:2000});
+    loadSequential({path:'/images/', exts:['.png','.jpg','.webp'], start:1, stopAfterMissing:5, maxImages:2000});
 </script>
 
 </html>
