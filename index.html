@@ -141,7 +141,7 @@
 
             for (const ext of exts) {
                 const tryUrl = baseurl + path + index + ext;
-                console.log(tryUrl);
+                console.log(tryUrl, ext);
                 const res = await tryImage(tryUrl);
                 if (res.ok) {
                     // create card
