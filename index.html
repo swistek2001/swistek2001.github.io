@@ -143,6 +143,7 @@
                 const tryUrl = baseurl + path + index + ext;
                 console.log(tryUrl, ext);
                 const res = await tryImage(tryUrl);
+                console.log(res);
                 if (res.ok) {
                     // create card
                     const card = document.createElement('div');
