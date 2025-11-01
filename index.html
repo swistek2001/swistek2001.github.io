@@ -66,6 +66,9 @@
             display: flex;
             justify-content: center;
         }
+        #gallery .card {
+            max-width: 500px;
+        }
     </style>
 </head>
 <body>
@@ -162,11 +165,7 @@
                     const imageEl = document.createElement('img');
                     imageEl.src = res.url;
                     imageEl.alt = `Image ${index}${ext}`;
-                    const cap = document.createElement('div');
-                    cap.className = 'caption';
-                    cap.textContent = index + ext;
                     card.appendChild(imageEl);
-                    card.appendChild(cap);
                     gallery.appendChild(card);
 
                     foundThisIndex = true;
